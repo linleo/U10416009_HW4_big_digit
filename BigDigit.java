@@ -8,6 +8,7 @@ public class BigDigit
 	{
 		ArrayList<Integer> number1 = new ArrayList<>();
 		ArrayList<Integer> number2 = new ArrayList<>();
+		ArrayList<Integer> answer = new ArrayList<>();
 		
 		int i;
 		boolean isNum1Nagetive = false;
@@ -30,10 +31,43 @@ public class BigDigit
 			}
 			number2.add(numberStr2.charAt(i) - '0');
 		}
+		
 		if (opereator.equals("+"))
-			addition(number1, number2, isNum1Nagetive, isNum2Nagetive);
-    else if (opereator.equals("-"))
-			subtraction(number1, number2, isNum1Nagetive, isNum2Nagetive, false);
+		{
+			answer = addition(number1, number2, isNum1Nagetive, isNum2Nagetive);
+			for (i = 0; i < answer.size(); i++)
+			{
+				System.out.print(answer.get(i));
+			}
+		}
+     	else if (opereator.equals("-"))
+		{
+			answer = subtraction(number1, number2, isNum1Nagetive, isNum2Nagetive, false);
+			boolean findNonZero = false;
+			for (i = 0; i < answer.size(); i++)
+			{		
+				if (answer.get(i) != 0)
+					findNonZero = true;
+				if (findNonZero)
+					System.out.print(answer.get(i));
+			}
+			if (!findNonZero)
+				System.out.print("0");
+		}
+		else if (opereator.equals("*"))
+		{
+			answer = multiplication(number1, number2, isNum1Nagetive, isNum2Nagetive, false);
+			boolean findNonZero = false;
+			for (i = 0; i < answer.size(); i++)
+			{		
+				if (answer.get(i) != 0)
+					findNonZero = true;
+				if (findNonZero)
+					System.out.print(answer.get(i));
+			}
+			if (!findNonZero)
+				System.out.print("0");
+		}
 	}
 	
 	void parseToSameDigit(ArrayList<Integer> number1, ArrayList<Integer> number2)
@@ -62,7 +96,6 @@ public class BigDigit
 	{
 		ArrayList<Integer> answer = new ArrayList<>();
 		
-		int i, carry = 0;
 		if (!isNum1Nagetive && isNum2Nagetive)
 		{
 			return subtraction(number1, number2, false, false, false);
@@ -72,14 +105,15 @@ public class BigDigit
 			return subtraction(number2, number1, false, false, false);
 		}
 		parseToSameDigit(number1, number2);
+		int i, carry = 0;
 		for (i = number1.size()-1; i > -1; i--)
 		{
-			if ((number1.get(i) + number2.get(i)) > 9)
+			if ((number1.get(i) + number2.get(i) + carry) > 9)
 			{
-				answer.add(0, (((number1.get(i) + number2.get(i)) % 10) + carry));
+				answer.add(0, ((number1.get(i) + number2.get(i) + carry) % 10));
 				carry = 1;
 				if (i == 0)
-					answer.add(0, 1);
+					answer.add(0,1);
 			}
 			else 
 			{
@@ -89,10 +123,6 @@ public class BigDigit
 		}
 		if (isNum1Nagetive && isNum2Nagetive)
 			System.out.print("-");
-		for (i = 0; i < answer.size(); i++)
-		{
-			System.out.print(answer.get(i));
-		}
 		return answer;
 	}
 
@@ -116,7 +146,7 @@ public class BigDigit
 		int i, borrow = 0;
 		for (i = number1.size()-1; i > -1; i--)
 		{
-			if ((number1.get(i) - number2.get(i)) < 0)
+			if ((number1.get(i) - number2.get(i) - borrow) < 0)
 			{
 				answer.add(0, ((number1.get(i) - number2.get(i) + 10) - borrow));
 				borrow = 1;
@@ -129,16 +159,6 @@ public class BigDigit
 		}
 		if (addMinuSign)
 			System.out.print("-");
-		boolean findNonZero = false;
-		for (i = 0; i < answer.size(); i++)
-		{		
-			if (answer.get(i) != 0)
-				findNonZero = true;
-			if (findNonZero)
-				System.out.print(answer.get(i));
-		}
-		if (!findNonZero)
-			System.out.print("0");
 		return answer;
 	}
 	
@@ -155,4 +175,3 @@ public class BigDigit
 		}
 		return true;
 	}
-}
