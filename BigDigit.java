@@ -4,6 +4,7 @@ public class BigDigit
 {	
 	BigDigit() {}
 	
+	//parse the string to integer
 	void parseStrToInt(String numberStr1, String numberStr2, String opereator)
 	{
 		ArrayList<Integer> number1 = new ArrayList<>();
@@ -40,7 +41,7 @@ public class BigDigit
 				System.out.print(answer.get(i));
 			}
 		}
-     	else if (opereator.equals("-"))
+     		else if (opereator.equals("-"))
 		{
 			answer = subtraction(number1, number2, isNum1Nagetive, isNum2Nagetive, false);
 			boolean findNonZero = false;
@@ -70,7 +71,8 @@ public class BigDigit
 		}
 	}
 	
-	void parseToSameDigit(ArrayList<Integer> number1, ArrayList<Integer> number2)
+	//parse two number to same size
+	void parseToSameSize(ArrayList<Integer> number1, ArrayList<Integer> number2)
 	{
 		int digitOffset1, digitOffset2;
 		int i;
@@ -91,7 +93,24 @@ public class BigDigit
 			}
 		}
 	}
+	
+	//judge the first number is greater or equal to the second number 
+	boolean isGreaterOrEqual(ArrayList<Integer> number1, ArrayList<Integer> number2)
+	{
+		parseToSameSize(number1, number2);
+		int i;
+		for (i = 0; i < number1.size(); i++)
+		{
+			if (number1.get(i) > number2.get(i))
+				return true;
+			else if (number1.get(i) < number2.get(i))
+				return false;
+		}
+		return true;
+	}
 
+
+	//a method for addition
 	ArrayList<Integer> addition(ArrayList<Integer> number1, ArrayList<Integer> number2, boolean isNum1Nagetive, boolean isNum2Nagetive)
 	{
 		ArrayList<Integer> answer = new ArrayList<>();
@@ -104,7 +123,7 @@ public class BigDigit
 		{
 			return subtraction(number2, number1, false, false, false);
 		}
-		parseToSameDigit(number1, number2);
+		parseToSameSize(number1, number2);
 		int i, carry = 0;
 		for (i = number1.size()-1; i > -1; i--)
 		{
@@ -126,6 +145,7 @@ public class BigDigit
 		return answer;
 	}
 
+	//a method for subtraction
 	ArrayList<Integer> subtraction(ArrayList<Integer> number1, ArrayList<Integer> number2, boolean isNum1Nagetive, boolean isNum2Nagetive, boolean addMinuSign)
 	{
 		ArrayList<Integer> answer = new ArrayList<>();
@@ -142,7 +162,7 @@ public class BigDigit
 			return subtraction(number2, number1, false, false, false);
 		else if (!isGreaterOrEqual(number1, number2))
 			return subtraction(number2, number1, false, false, true);
-		parseToSameDigit(number1, number2);
+		parseToSameSize(number1, number2);
 		int i, borrow = 0;
 		for (i = number1.size()-1; i > -1; i--)
 		{
@@ -162,16 +182,55 @@ public class BigDigit
 		return answer;
 	}
 	
-	boolean isGreaterOrEqual(ArrayList<Integer> number1, ArrayList<Integer> number2)
+	//a method for multiplication
+	ArrayList<Integer> multiplication(ArrayList<Integer> number1, ArrayList<Integer> number2, boolean isNum1Nagetive, boolean isNum2Nagetive, boolean addMinuSign)
 	{
-		parseToSameDigit(number1, number2);
-		int i;
-		for (i = 0; i < number1.size(); i++)
+		ArrayList<Integer> answer = new ArrayList<>();
+		ArrayList<Integer> total = new ArrayList<>();
+		if (!isNum1Nagetive && isNum2Nagetive)
 		{
-			if (number1.get(i) > number2.get(i))
-				return true;
-			else if (number1.get(i) < number2.get(i))
-				return false;
+			addMinuSign = true;
 		}
-		return true;
+		else if (isNum1Nagetive && !isNum2Nagetive)
+		{
+			addMinuSign = true;
+		}
+		else if (isNum1Nagetive && isNum2Nagetive)
+		{
+			addMinuSign = false;
+		}
+		if (addMinuSign)
+			System.out.print("-");
+		
+		int i, j, k, counter = 0, carry = 0;
+		for (j = number2.size()-1; j > -1; j--)
+		{
+			for (i = number1.size()-1; i > -1; i--)
+			{
+				if ((number1.get(i) * number2.get(j) + carry) > 9)
+				{
+					total.add(0, (number1.get(i) * number2.get(j) + carry) % 10);
+					carry = ((number1.get(i) * number2.get(j) + carry) / 10);
+					if (i == 0)
+					{
+						total.add(0, carry);
+					}
+				}
+				else 
+				{
+					total.add(0, (number1.get(i) * number2.get(j) + carry));
+					carry = 0;
+				}
+			}
+			answer = addition(answer, total, false, false);
+			carry = 0;
+			total.clear();
+			counter++;
+			for (k = 0; k < counter; k++)
+			{
+				total.add(0);
+			}
+		}
+		return answer;
 	}
+}
